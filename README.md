@@ -54,3 +54,13 @@ If you come to see an error message, then you must fix it first.
 
 ## Learning R
 - Hands-On Programming with R: https://rstudio-education.github.io/hopr/basics.html 
+- Working directory is important at the starting point.
+      ```
+          > getwd()
+      ```
+  - Default working directory : `Tools -> Global Options`
+  - `Session -> Set Working Directory -> Choose Directory` or `Ctrl+Shift+H`
+## Plotting with `ggplot2` or `tidyverse`
+- R Graphics Cookbook 2e: https://r-graphics.org/ 
+- R for Data Science 2e: https://r4ds.hadley.nz/data-visualize
+- 
