@@ -61,6 +61,6 @@ If you come to see an error message, then you must fix it first.
   - Default working directory : `Tools -> Global Options`
   - `Session -> Set Working Directory -> Choose Directory` or `Ctrl+Shift+H`
 ## Plotting with `ggplot2` or `tidyverse`
-- R Graphics Cookbook 2e: https://r-graphics.org/ 
+- R Graphics Cookbook 2e ( https://r-graphics.org/ ) if you want to dive into making common graphics as quickly as possibly.
 - R for Data Science 2e: https://r4ds.hadley.nz/data-visualize
 - 
