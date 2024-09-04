@@ -71,7 +71,7 @@ for (i in 1:5) {
 print(py_x)
 ```
 
-Sanity check - the sums must be 1 for every i.
+Sanity check - the sum must be 1 for every i.
 ```{r}
 for (i in 1:5) {
   s = sum(py_x[,i])
