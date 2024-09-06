@@ -259,3 +259,49 @@ barplot(posterior, names=round(vtheta,2),
         main=paste("Posterior; max @ theta = ", round(MAP,2))
 )
 ```
+
+
+# Symbolic computation
+
+bernoulli likelihood * beta prior = beta posterior
+
+$$
+  Beta(\theta|a, b) = \frac{\theta^{a-1} (1-\theta)^{b-1} }{B(a,b)}
+$$
+where $B(a,b)$ is a normalization constant depending on $a$ and $b$ defined by:
+$$
+  B(a,b) = \int_0^1 \theta^{a-1} (1-\theta)^{b-1} d\theta
+$$
+or
+$$
+  B(a,b) = \frac{\Gamma(a)\Gamma(b)}{\Gamma(a+b)} \quad\quad
+  \Gamma(a) = \int_0^\infty t^{a-1} e^{-t} dt
+$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
