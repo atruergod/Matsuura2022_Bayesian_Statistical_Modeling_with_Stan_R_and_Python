@@ -1,5 +1,5 @@
 ---
-title: "Bayes's Rule"
+title: "Bayes's Rule and Sampling"
 author: "서용덕"
 date: "`r Sys.Date()`"
 output: html_document
@@ -7,101 +7,251 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library("Rlab")
 ```
 
-## R Markdown
+## Bernoulli distribution model
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+The sample $Y$ is obtained from a Bernoulli distribution
+$$
+Y \sim Bern(\theta)
+$$
+where
+$$
+  P(Y|\theta) = Bern(Y|\theta) = \left\{ 
+    \begin{array}{c}
+      \theta & \mbox{if }  Y=1\\
+      1-\theta & \mbox{if } Y = 0
+    \end{array}
+  \right.
+$$
+or equivalently
+$$
+  P(Y|\theta) = \theta^Y (1-\theta)^{1-Y}
+$$
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+In R, we can get random samples from Bern(0.5):
+```{r}
+  theta = 0.5
+  nsamples = 11
+  y = rbern(nsamples, theta)
+  print(y)
+  
+```
+```{r}
+  theta = 0.7
+  nsamples = 1001
+  y = rbern(nsamples, theta)
+  hist(y, main="histogram of Bernoulli samples")
+  
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+  theta = 0.5
+  nsamples = 1001
+  y = rbern(nsamples, theta)
+  hist(y)
+  
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+  theta = 0.3
+  nsamples = 1001
+  y = rbern(nsamples, theta)
+  hist(y)
+  
+```
 
+```{r}
+  theta = 0.1
+  nsamples = 1001
+  y = rbern(nsamples, theta)
+  hist(y)
+  
+```
+
+As can be seen, the random outputs depend on the value of the parameter $\theta$
+
+
+## Posterior probability
+```{r}
+  data = c(1,1,1,1,0)  # random outputs
+```
+
+Q: Given this data, what is the posterior probability of $\theta$, the probability of producing "1" in the experiment?
+
+```{r}
+  vtheta <- c(.3, .4, .5, .6, .7) # possible values of theta values
+  p_theta <- c(.3, .7, 1, .7, .3)
+  p_theta = p_theta / sum(p_theta)
+  barplot(p_theta, names=vtheta)
+```
+
+```{r}
+likelihood = vtheta * vtheta * vtheta * (1- vtheta) * (1-vtheta)
+Punnormalized = likelihood * p_theta
+Z = sum(Punnormalized)
+posterior = Punnormalized / Z
+
+barplot(posterior, names=vtheta)
+```
+
+```{r}
+ratio = posterior / p_theta
+print(ratio)
+barplot(ratio, names=vtheta, col="#700000")
+abline(h=1)
+```
+```{r}
+barplot(rbind(posterior, p_theta),
+        beside=T,
+        col=c("#700000", "#000070"),
+        names=vtheta)
+```
+
+
+
+## Beta distribution for $\theta \in [0, 1]$
+
+$$
+  \theta \sim Beta(\alpha, \beta)
+$$
+```{r}
+  t = seq(0, 1, length=101)
+  alpha = 4
+  beta  = 2
+  pbeta = dbeta(t, alpha, beta)
+  plot(t, pbeta, col="#00007f")
+```
 
 
 ```{r}
-a = 1
-b = 2
-c = a + b
-print(c)
+# Define the range
+p <- seq(0, 1, length = 100)
+
+# Plot the first Beta distribution
+plot(p, dbeta(p, 2, 5), type = 'l', col = 'blue', 
+     main = 'Beta Distributions', 
+     xlab = 'x', 
+     ylab = 'Density')
+
+# Add more Beta distributions
+lines(p, dbeta(p, 5, 2), col = 'red')
+lines(p, dbeta(p, 2, 2), col = 'green')
+
+# Add a legend
+legend('topright', legend = c('Beta(2, 5)', 'Beta(5, 2)', 'Beta(2, 2)'), 
+       col = c('blue', 'red', 'green'), lty = 1)
 ```
 
-## Bayes Update
-
 ```{r}
-v1 = c(.01, .02, .03, .1, .1)
-v2 = c(.05, .1, .05, .07, .2)
-v3 = c(.1, .05, .03, .05, .04)
+# Define the range
+p <- seq(0, 1, length = 50)
 
-pxy = matrix(0, nrow=3, ncol=5)
-pxy[1,] = v1
-pxy[2,] = v2
-pxy[3,] = v3
+# Plot the first Beta distribution
+plot(p, dbeta(p, 12, 25), type = 'l', col = 'blue', 
+     main = 'Beta Distributions', 
+     xlab = 'x', 
+     ylab = 'Density')
 
-print(pxy)
+# Add more Beta distributions
+lines(p, dbeta(p, 25, 12), col = 'red')
+lines(p, dbeta(p, 20, 20), col = 'green')
+
+# Add a legend
+legend('topright', legend = c('Beta(12, 25)', 'Beta(25, 12)', 'Beta(20,20)'), 
+       col = c('blue', 'red', 'green'), lty = 1)
 ```
 
-### marginal
+
+
+## Posterior with Beta grid
+The same data
 ```{r}
-px = rep(0, 5)  # zero vector of size 5
-for (i in 1:5) {
-  px[i] = sum(pxy[,i])
+  data = c(1,1,1,0,0)  # random outputs
+```
+
+Q: Given this data, what is the posterior probability of $\theta$, the probability of producing "1" in the experiment?
+
+```{r}
+  vtheta <- seq(0, 1, length = 21) # possible values of theta values
+  p_theta <- dbeta(vtheta, 5, 5)   # probability density is obtained
+  p_theta = p_theta / sum(p_theta) # modify it to use as a PMS
+  barplot(p_theta, names=round(vtheta, digits=2), main="Prior distribution of theta")
+```
+
+```{r}
+# likelihood = vtheta * vtheta * vtheta * (1- vtheta) * (1-vtheta)
+likelihood = 1
+for (i in 1:length(data)) {
+  if (data[i] == 1) {
+    likelihood = likelihood * vtheta
+  }
+  else{ 
+    likelihood = likelihood * (1 - vtheta)
+  }
 }
+
+barplot(likelihood, names=round(vtheta, 2), main="Likelihood function")
 ```
 
-### conditional
+Notice that the sum of the likelhood is not 1:
 ```{r}
-py_x <- pxy
-
-for (i in 1:5) {
-  py_x[,i] = pxy[,i] / px[i]
-}
-print(py_x)
+print(paste("sum of likelihood = ", sum(likelihood)))
 ```
 
-Sanity check - the sums must be 1 for every i.
+Now, we compute the posterior
 ```{r}
-for (i in 1:5) {
-  s = sum(py_x[,i])
-  print(paste(i, "sum = ", s))
-}
+Punnormalized = likelihood * p_theta
+Z = sum(Punnormalized)
+posterior = Punnormalized / Z
+print(paste("Z = ", Z))
 ```
-
-### Now compute the posterior P(X|Y=y2)
 ```{r}
-meas = 2  # Y=y_2
-
-py2_x = py_x[2,]       # likelihood
-
-py2_x_px = py2_x * px  # likelihood * prior
-
-Z = sum(py2_x_px)      # normlization constant
-
-px_y2 = py2_x_px / Z   # normalize to obtain a probability mass function
-
-for (i in 1:5) {
-  print(paste("P(X_", i, "|Y=y2) = ", px_y2[i]))
-}
-print(sum(px_y2))
+barplot(posterior, names=round(vtheta, digits=2), main="Posterior")
 ```
 
 ```{r}
-print(px_y2)
+ratio = posterior / p_theta
+barplot(ratio, names=vtheta, col="#700000")
+abline(h=1)
+```
+```{r}
+barplot(rbind(posterior, p_theta),
+        beside=T,
+        col=c("#700000", "#0000f0"),
+        names=vtheta)
+```
+## MLE, MAP, Posterior distribution
+
+* MLE: Maximum likelihood estimate. The theta value where the likelihood function is maximum.
+* MAP: Maximum location of the posterior distribution
+
+```{r}
+index_mle = which.max(likelihood)
+mle = vtheta[index_mle]
+print(paste("MLE = ", mle))
+```
+
+```{r}
+barplot(likelihood, names=round(vtheta,2),
+        main=paste("Likelihood; max @ theta = ", mle)
+        )
+```
+```{r}
+index_map = which.max(posterior)
+MAP = vtheta[index_map]
+print(paste("MAP=", MAP))
+
+index_map2 = which.max(Punnormalized)
+MAP2 = vtheta[index_map]
+print(paste("MAP=", MAP2))
 ```
 
 
 ```{r}
-barplot(px_y2, names=1:5, col='#800000')
+barplot(posterior, names=round(vtheta,2),
+        main=paste("Posterior; max @ theta = ", round(MAP,2))
+)
 ```
