@@ -201,7 +201,11 @@ Notice that the sum of the likelhood is not 1:
 print(paste("sum of likelihood = ", sum(likelihood)))
 ```
 
+<<<<<<< HEAD
 Now, we compute the posterior
+=======
+Sanity check - the sum must be 1 for every i.
+>>>>>>> 3b8a909d1c3ad14d1aa128b827105bbe757b16b0
 ```{r}
 Punnormalized = likelihood * p_theta
 Z = sum(Punnormalized)
