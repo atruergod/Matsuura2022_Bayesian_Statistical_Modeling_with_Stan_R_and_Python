@@ -1,3 +1,7 @@
+# cmdstanr is much faster then rstan.
+# Don't use this file
+# See: twopl_cmdstanr.R
+#
 # https://mc-stan.org/users/documentation/case-studies/tutorial_twopl.html
 
 # Try 3. Direct use of Stan without edstan package
@@ -69,7 +73,7 @@ print(spelling[preview_rows, ])
                     y=long$response)
 
 
-# fit with MCMC
+# fit with stanr / MCMC
     
 twopl.fit <- stan(file = stan_filename, 
                   model_name = "twopl",
