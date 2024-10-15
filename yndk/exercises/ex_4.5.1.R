@@ -54,7 +54,10 @@ model {
   for (i in 1:N) {
     Y[i] ~ normal(mean[group[i]], sigma);
   }
-  //  Y[1:N] ~ normal(mean[group[1:N]]), sigma);  // try later
+}
+
+generated quantities {
+  real effect = mean[2] - mean[1];  // how much positive effect
 }
 "
 stan_file <- write_stan_file(stan_program_2, dir = "./stan", force_overwrite = TRUE)
@@ -70,18 +73,24 @@ fit2$summary()
 
 mcmc_hist(fit2$draws())
 
-mcmc_pairs(fit2$draws(c("mean", "sigma")))
+mcmc_pairs(fit2$draws(c("mean", "sigma", "effect")))
 
 m1s <- c(fit2$draws("mean[1]"))  # make a long vector using c()
 m2s <- c(fit2$draws("mean[2]"))  # make a long vector using c()
 
 Pr_1lt2 = sum(m1s < m2s) / length(m1s)
-print(sprintf("Pr[mu1 < mu2] = %.2f", Pr_1lt2))
+print(sprintf("Pr[mu1 < mu2]  = %.2f", Pr_1lt2))
+positive_effect = fit2$draws("effect")>0
+print(sprintf("Pr[effect > 0] = %.2f", mean(positive_effect)))
 
 ggplot(data.frame(m1 = m1s, m2=m2s), aes(x=m2, y=m1)) + 
   geom_point(alpha=.35, color = "#0fa0ef") + 
   geom_abline(slope = 1, intercept = 0, color = "red") +
   ggtitle(sprintf("Pr[mu1 < mu2] = %.2f   Common sigma model", Pr_1lt2))
+
+ggplot(data.frame(effect = c(fit2$draws("effect"))), aes(x=effect)) +
+  geom_histogram(bins = 50, color = "#0fa0ef") +
+  geom_vline(xintercept = 0, color="darkred")
 
 #
 # (5) Write a model formula with the assumption that the two SDs are different. This 
@@ -100,10 +109,14 @@ parameters {
 }
 
 model {
-  for (i in 1:N) {
-    Y[i] ~ normal(mean[group[i]], sigma[group[i]]);
-  }
-  //  Y[1:N] ~ normal(mean[group[1:N]]), sigma);  // try later
+//  for (i in 1:N) {
+//    Y[i] ~ normal(mean[group[i]], sigma[group[i]]);
+//  }
+    Y[1:N] ~ normal(mean[group[1:N]], sigma[group[1:N]]);  // vector form
+}
+
+generated quantities {
+  real effect = mean[2] - mean[1];  // how much positive effect
 }
 "
 stan_file5 <- write_stan_file(stan_program_5, 
@@ -131,4 +144,5 @@ print(sprintf("Pr[mu1 < mu2] = %.2f", Pr_1lt2))
 ggplot(data.frame(m1 = m1s, m2=m2s), aes(x=m2, y=m1)) + 
   geom_point(alpha=.35, color = "#0fa0ef") + 
   geom_abline(slope = 1, intercept = 0, color = "red") +
-  ggtitle(sprintf("Pr[mu1 < mu2] = %.2f  Separate sigma model", Pr_1lt2))
+  ggtitle(sprintf("Pr[m1 < m2] = %.2f; Welch’s t-test (separate sigma model)", Pr_1lt2))
+
