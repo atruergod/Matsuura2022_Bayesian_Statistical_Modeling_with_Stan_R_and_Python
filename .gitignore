@@ -10,3 +10,5 @@ chap04/output/fig4-2-right.png
 yndk/bayes_1.html
 .Rproj.user
 yndk/twopl/outputs/*
+.venv/
+chap04/output/
