@@ -14,3 +14,5 @@ yndk/twopl/outputs/*
 chap04/output/
 chap04/run-exercise4.html
 chap04/run-model4-4.html
+chap04/model/model_equal_sd.stan
+chap04/.ipynb_checkpoints/run-model4-4-checkpoint.ipynb
