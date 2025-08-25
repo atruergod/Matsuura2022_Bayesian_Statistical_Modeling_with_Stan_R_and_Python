@@ -20,3 +20,16 @@ chap08/model/model8-4
 chap08/model/model8-3
 chap08/model/model8-2
 chap08/model/model8-1
+chap04/output/*
+yndk/twopl/outputs.zip
+yndk/.Rhistory
+yndk/bernoulli/cmdstanr.html
+yndk/bernoulli/cmdstanr.Rmd
+yndk/bernoulli/install_cmdstanr.R
+yndk/yndk.Rproj
+chap05/output/*
+chap05/UntitledR.R
+chap05/fig5-4_std.R
+chap05/run-model5-3.R
+yndk/bernoulli/children/_settings-knitr.Rmd
+yndk/exercises/stan/*
