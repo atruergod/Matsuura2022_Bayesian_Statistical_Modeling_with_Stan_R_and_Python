@@ -34,3 +34,4 @@ chap05/run-model5-3.R
 yndk/bernoulli/children/_settings-knitr.Rmd
 yndk/exercises/stan/*
 
+chap05/model/model5-3-gamma.stan
